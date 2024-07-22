@@ -48,7 +48,7 @@ app.post("/analytics", async (req, res) => {
       await databases.updateDocument(
         "669ec60f003b49ce1606",
         "669ec86f002e6e45e6b8",
-        documentId,
+        existingDocuments.documents[0].interactions.$id,
         {
           clicks: interactions.clicks,
           scrollDepth: interactions.scrollDepth,
