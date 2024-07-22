@@ -31,7 +31,8 @@ app.post("/analytics", async (req, res) => {
     visitDuration,
     browser,
     device,
-    interactions,
+    clicks,
+    scrollDepth,
   } = req.body;
 
   try {
@@ -45,14 +46,13 @@ app.post("/analytics", async (req, res) => {
     if (existingDocuments.total > 0) {
       // Update the existing document
       const documentId = existingDocuments.documents[0].$id;
-      const interactionJson = JSON.parse(interactions);
       await databases.updateDocument(
         "669ec60f003b49ce1606",
         "669ec86f002e6e45e6b8",
         existingDocuments.documents[0].interactions.$id,
         {
-          clicks: interactionJson.clicks,
-          scrollDepth: interactionJson.scrollDepth,
+          clicks: clicks,
+          scrollDepth: scrollDepth,
         }
       );
       const response = await databases.updateDocument(
@@ -79,7 +79,10 @@ app.post("/analytics", async (req, res) => {
           visitDuration,
           browser,
           device,
-          interactions,
+          interactions: {
+            clicks,
+            scrollDepth,
+          },
         }
       );
       res.status(200).json({ success: true, response });
