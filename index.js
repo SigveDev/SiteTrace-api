@@ -45,19 +45,21 @@ app.post("/analytics", async (req, res) => {
     if (existingDocuments.total > 0) {
       // Update the existing document
       const documentId = existingDocuments.documents[0].$id;
+      await databases.updateDocument(
+        "669ec60f003b49ce1606",
+        "669ec86f002e6e45e6b8",
+        documentId,
+        {
+          clicks: interactions.clicks,
+          scrollDepth: interactions.scrollDepth,
+        }
+      );
       const response = await databases.updateDocument(
         "669ec60f003b49ce1606",
         "669ec6270000b46216c0",
         documentId,
         {
-          url,
-          referrer,
-          userAgent,
-          timestamp,
           visitDuration,
-          browser,
-          device,
-          interactions,
         }
       );
       res.status(200).json({ success: true, response });
