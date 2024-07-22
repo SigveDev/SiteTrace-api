@@ -16,7 +16,7 @@ const databases = new Databases(client);
 client
   .setEndpoint(process.env.ENDPOINT || "https://cloud.appwrite.io/v1") // Your Appwrite Endpoint
   .setProject(process.env.PROJECT_ID || "") // Your project ID
-  .setKey(process.env.API_KEY); // Your secret API key
+  .setKey(process.env.API_KEY || ""); // Your secret API key
 
 // Endpoint to receive analytics data
 app.post("/analytics", async (req, res) => {
@@ -36,8 +36,8 @@ app.post("/analytics", async (req, res) => {
     // Check if a document with the same sessionId already exists
     const existingDocuments = await databases.listDocuments(
       "669ec60f003b49ce1606", // Your database ID
-      "669ec86f002e6e45e6b8", // Your collection ID
-      [Query.equal("sessionId", sessionId)]
+      "669ec6270000b46216c0", // Your collection ID
+      [Query.equal("sessionId", [sessionId])]
     );
 
     if (existingDocuments.total > 0) {
@@ -45,7 +45,7 @@ app.post("/analytics", async (req, res) => {
       const documentId = existingDocuments.documents[0].$id;
       const response = await databases.updateDocument(
         "669ec60f003b49ce1606",
-        "669ec86f002e6e45e6b8",
+        "669ec6270000b46216c0",
         documentId,
         {
           url,
@@ -63,7 +63,7 @@ app.post("/analytics", async (req, res) => {
       // Create a new document
       const response = await databases.createDocument(
         "669ec60f003b49ce1606",
-        "669ec86f002e6e45e6b8",
+        "669ec6270000b46216c0",
         ID.unique(),
         {
           url,
