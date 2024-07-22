@@ -45,13 +45,14 @@ app.post("/analytics", async (req, res) => {
     if (existingDocuments.total > 0) {
       // Update the existing document
       const documentId = existingDocuments.documents[0].$id;
+      const interactionJson = JSON.parse(interactions);
       await databases.updateDocument(
         "669ec60f003b49ce1606",
         "669ec86f002e6e45e6b8",
         existingDocuments.documents[0].interactions.$id,
         {
-          clicks: interactions.clicks,
-          scrollDepth: interactions.scrollDepth,
+          clicks: interactionJson.clicks,
+          scrollDepth: interactionJson.scrollDepth,
         }
       );
       const response = await databases.updateDocument(
