@@ -24,7 +24,7 @@ client
 app.post("/analytics", async (req, res) => {
   const {
     url,
-    referrer,
+    referrer = "Unknown",
     userAgent = "Unknown",
     timestamp,
     sessionId,
@@ -66,7 +66,7 @@ app.post("/analytics", async (req, res) => {
         existingDocuments.documents[0].network.$id,
         {
           effectiveType: network.effectiveType,
-          downlink: network.downlink,
+          downlink: Math.round(network.downlink),
           rtt: network.rtt,
         }
       );
@@ -86,6 +86,89 @@ app.post("/analytics", async (req, res) => {
           focus,
         }
       );
+
+      const totalAnalyticsRequest = await databases.listDocuments(
+        "66a67e300033058839e7",
+        "66abf41700087eac9f08",
+        [Query.contains("url", [url])]
+      );
+      if (totalAnalyticsRequest.total > 0) {
+        const analyticsDocumentId = totalAnalyticsRequest.documents[0].$id;
+        const totalAnalytics = totalAnalyticsRequest.documents[0];
+        await databases.updateDocument(
+          "66a67e300033058839e7",
+          "66abf41700087eac9f08",
+          analyticsDocumentId,
+          {
+            interactions: totalAnalytics.interactions + clicks + scrollDepth,
+          }
+        );
+
+        const browserAnalyticsRequest = totalAnalytics.topBrowser.find(
+          (topBrowser) => topBrowser.name === browser.name
+        );
+
+        if (!browserAnalyticsRequest) {
+          await databases.createDocument(
+            "66a67e300033058839e7",
+            "66abf4c50019a8548c6c",
+            ID.unique(),
+            {
+              analytics: analyticsDocumentId,
+              name: browser.name,
+              amount: 1,
+            }
+          );
+        }
+
+        const referrerAnalyticsRequest = totalAnalytics.topReferrer.find(
+          (topReferrer) => topReferrer.name === referrer
+        );
+
+        if (!referrerAnalyticsRequest) {
+          await databases.createDocument(
+            "66a67e300033058839e7",
+            "66abf51e003195178367",
+            ID.unique(),
+            {
+              analytics: analyticsDocumentId,
+              name: referrer,
+              amount: 1,
+            }
+          );
+        }
+
+        const deviceAnalyticsRequest = totalAnalytics.topDevice.find(
+          (topDevice) => topDevice.name === device
+        );
+
+        if (!deviceAnalyticsRequest) {
+          await databases.createDocument(
+            "66a67e300033058839e7",
+            "66abf5990001ff3009a9",
+            ID.unique(),
+            {
+              analytics: analyticsDocumentId,
+              name: device,
+              amount: 1,
+            }
+          );
+        }
+      } else {
+        await databases.createDocument(
+          "66a67e300033058839e7",
+          "66abf41700087eac9f08",
+          ID.unique(),
+          {
+            url,
+            views: 1,
+            interactions: clicks + scrollDepth,
+            topBrowser: [{ name: browser.name, amount: 1 }],
+            topReferrer: [{ name: referrer, amount: 1 }],
+            topDevice: [{ name: device, amount: 1 }],
+          }
+        );
+      }
       res.status(200).json({ success: true, response });
     } else {
       // Create a new document
@@ -119,8 +202,7 @@ app.post("/analytics", async (req, res) => {
       );
       if (totalAnalyticsRequest.total > 0) {
         const analyticsDocumentId = totalAnalyticsRequest.documents[0].$id;
-        const totalAnalytics =
-          totalAnalyticsRequest.documents[0].totalAnalytics;
+        const totalAnalytics = totalAnalyticsRequest.documents[0];
         await databases.updateDocument(
           "66a67e300033058839e7",
           "66abf41700087eac9f08",
@@ -131,25 +213,18 @@ app.post("/analytics", async (req, res) => {
           }
         );
 
-        const browserAnalyticsRequest = await databases.listDocuments(
-          "66a67e300033058839e7",
-          "66abf4c50019a8548c6c",
-          [
-            Query.contains("name", [browser.name]),
-            Query.contains("analytics", [analyticsDocumentId]),
-          ]
+        const browserAnalyticsRequest = totalAnalytics.topBrowser.find(
+          (topBrowser) => topBrowser.name === browser.name
         );
 
-        if (browserAnalyticsRequest.total > 0) {
-          const documentId = browserAnalyticsRequest.documents[0].$id;
-          const browserAnalytics =
-            browserAnalyticsRequest.documents[0].browserAnalytics;
+        if (browserAnalyticsRequest) {
+          const documentId = browserAnalyticsRequest.$id;
           await databases.updateDocument(
             "66a67e300033058839e7",
             "66abf4c50019a8548c6c",
             documentId,
             {
-              amount: browserAnalytics.amount + 1,
+              amount: browserAnalyticsRequest.amount + 1,
             }
           );
         } else {
@@ -165,25 +240,18 @@ app.post("/analytics", async (req, res) => {
           );
         }
 
-        const referrerAnalyticsRequest = await databases.listDocuments(
-          "66a67e300033058839e7",
-          "66abf51e003195178367",
-          [
-            Query.contains("name", [referrer]),
-            Query.contains("analytics", [analyticsDocumentId]),
-          ]
+        const referrerAnalyticsRequest = totalAnalytics.topReferrer.find(
+          (topReferrer) => topReferrer.name === referrer
         );
 
-        if (referrerAnalyticsRequest.total > 0) {
-          const documentId = referrerAnalyticsRequest.documents[0].$id;
-          const referrerAnalytics =
-            referrerAnalyticsRequest.documents[0].referrerAnalytics;
+        if (referrerAnalyticsRequest) {
+          const documentId = referrerAnalyticsRequest.$id;
           await databases.updateDocument(
             "66a67e300033058839e7",
             "66abf51e003195178367",
             documentId,
             {
-              amount: referrerAnalytics.amount + 1,
+              amount: referrerAnalyticsRequest.amount + 1,
             }
           );
         } else {
@@ -199,25 +267,18 @@ app.post("/analytics", async (req, res) => {
           );
         }
 
-        const deviceAnalyticsRequest = await databases.listDocuments(
-          "66a67e300033058839e7",
-          "66abf5990001ff3009a9",
-          [
-            Query.contains("name", [device]),
-            Query.contains("analytics", [analyticsDocumentId]),
-          ]
+        const deviceAnalyticsRequest = totalAnalytics.topDevice.find(
+          (topDevice) => topDevice.name === device
         );
 
-        if (deviceAnalyticsRequest.total > 0) {
-          const documentId = deviceAnalyticsRequest.documents[0].$id;
-          const deviceAnalytics =
-            deviceAnalyticsRequest.documents[0].deviceAnalytics;
+        if (deviceAnalyticsRequest) {
+          const documentId = deviceAnalyticsRequest.$id;
           await databases.updateDocument(
             "66a67e300033058839e7",
             "66abf5990001ff3009a9",
             documentId,
             {
-              amount: deviceAnalytics.amount + 1,
+              amount: deviceAnalyticsRequest.amount + 1,
             }
           );
         } else {
@@ -241,9 +302,9 @@ app.post("/analytics", async (req, res) => {
             url,
             views: 1,
             interactions: clicks + scrollDepth,
-            browser: { name: browser.name, amount: 1 },
-            referrer: { name: referrer, amount: 1 },
-            device: { name: device, amount: 1 },
+            topBrowser: [{ name: browser.name, amount: 1 }],
+            topReferrer: [{ name: referrer, amount: 1 }],
+            topDevice: [{ name: device, amount: 1 }],
           }
         );
       }
@@ -251,6 +312,7 @@ app.post("/analytics", async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+    console.error(error);
   }
 });
 
