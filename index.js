@@ -241,9 +241,9 @@ app.post("/analytics", async (req, res) => {
             url,
             views: 1,
             interactions: clicks + scrollDepth,
-            browser: [{ name: browser.name, amount: 1 }],
-            referrer: [{ name: referrer, amount: 1 }],
-            device: [{ name: device, amount: 1 }],
+            browser: { name: browser.name, amount: 1 },
+            referrer: { name: referrer, amount: 1 },
+            device: { name: device, amount: 1 },
           }
         );
       }
