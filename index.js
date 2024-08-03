@@ -200,6 +200,9 @@ app.post("/analytics", async (req, res) => {
           );
         }
       } else {
+        const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
+        const correctedTimestampDate = new Date(correctedTimestamp);
+
         await databases.createDocument(
           "66a67e300033058839e7",
           "66abf41700087eac9f08",
@@ -213,7 +216,7 @@ app.post("/analytics", async (req, res) => {
             topDevice: [{ name: device, amount: 1 }],
             analyticsOverTime: [
               {
-                datetime: timestamp,
+                datetime: correctedTimestampDate,
                 views: 1,
                 interactions: clicks + scrollDepth,
               },
@@ -380,6 +383,9 @@ app.post("/analytics", async (req, res) => {
           );
         }
       } else {
+        const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
+        const correctedTimestampDate = new Date(correctedTimestamp);
+
         await databases.createDocument(
           "66a67e300033058839e7",
           "66abf41700087eac9f08",
@@ -393,7 +399,7 @@ app.post("/analytics", async (req, res) => {
             topDevice: [{ name: device, amount: 1 }],
             analyticsOverTime: [
               {
-                datetime: timestamp,
+                datetime: correctedTimestampDate,
                 views: 1,
                 interactions: clicks + scrollDepth,
               },
