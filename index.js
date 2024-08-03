@@ -46,6 +46,7 @@ app.post("/analytics", async (req, res) => {
     loadTime = null,
     network = { effectiveType: "Unknown", downlink: null, rtt: null },
     focus = false,
+    removeOneFromUnknownDevice = false,
   } = req.body;
 
   try {
@@ -164,6 +165,25 @@ app.post("/analytics", async (req, res) => {
               amount: 1,
             }
           );
+        }
+
+        if (removeOneFromUnknownDevice) {
+          const unknownDeviceAnalyticsRequest =
+            totalAnalyticsRequest.documents[0].topDevice.find(
+              (topDevice) => topDevice.name === "Unknown"
+            );
+
+          if (unknownDeviceAnalyticsRequest) {
+            const documentId = unknownDeviceAnalyticsRequest.$id;
+            await databases.updateDocument(
+              "66a67e300033058839e7",
+              "66abf5990001ff3009a9",
+              documentId,
+              {
+                amount: unknownDeviceAnalyticsRequest.amount - 1,
+              }
+            );
+          }
         }
 
         const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
@@ -337,6 +357,25 @@ app.post("/analytics", async (req, res) => {
               amount: 1,
             }
           );
+        }
+
+        if (removeOneFromUnknownDevice) {
+          const unknownDeviceAnalyticsRequest =
+            totalAnalyticsRequest.documents[0].topDevice.find(
+              (topDevice) => topDevice.name === "Unknown"
+            );
+
+          if (unknownDeviceAnalyticsRequest) {
+            const documentId = unknownDeviceAnalyticsRequest.$id;
+            await databases.updateDocument(
+              "66a67e300033058839e7",
+              "66abf5990001ff3009a9",
+              documentId,
+              {
+                amount: unknownDeviceAnalyticsRequest.amount - 1,
+              }
+            );
+          }
         }
 
         const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
