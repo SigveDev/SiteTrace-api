@@ -169,6 +169,39 @@ app.post("/analytics", async (req, res) => {
           }
         );
       }
+
+      const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
+
+      const analyticsOverTimeRequest = totalAnalytics.analyticsOverTime.find(
+        (analytics) => analytics.datetime === correctedTimestamp
+      );
+
+      if (analyticsOverTimeRequest) {
+        const documentId = analyticsOverTimeRequest.$id;
+        await databases.updateDocument(
+          "66a67e300033058839e7",
+          "66ad3d9a00305e53d6f0",
+          documentId,
+          {
+            views: analyticsOverTimeRequest.views + 1,
+            interactions:
+              analyticsOverTimeRequest.interactions + clicks + scrollDepth,
+          }
+        );
+      } else {
+        await databases.createDocument(
+          "66a67e300033058839e7",
+          "66ad3d9a00305e53d6f0",
+          ID.unique(),
+          {
+            analytics: analyticsDocumentId,
+            datetime: correctedTimestamp,
+            views: 1,
+            interactions: clicks + scrollDepth,
+          }
+        );
+      }
+
       res.status(200).json({ success: true, response });
     } else {
       // Create a new document
@@ -293,6 +326,38 @@ app.post("/analytics", async (req, res) => {
             }
           );
         }
+
+        const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
+
+        const analyticsOverTimeRequest = totalAnalytics.analyticsOverTime.find(
+          (analytics) => analytics.datetime === correctedTimestamp
+        );
+
+        if (analyticsOverTimeRequest) {
+          const documentId = analyticsOverTimeRequest.$id;
+          await databases.updateDocument(
+            "66a67e300033058839e7",
+            "66ad3d9a00305e53d6f0",
+            documentId,
+            {
+              views: analyticsOverTimeRequest.views + 1,
+              interactions:
+                analyticsOverTimeRequest.interactions + clicks + scrollDepth,
+            }
+          );
+        } else {
+          await databases.createDocument(
+            "66a67e300033058839e7",
+            "66ad3d9a00305e53d6f0",
+            ID.unique(),
+            {
+              analytics: analyticsDocumentId,
+              datetime: correctedTimestamp,
+              views: 1,
+              interactions: clicks + scrollDepth,
+            }
+          );
+        }
       } else {
         await databases.createDocument(
           "66a67e300033058839e7",
@@ -305,6 +370,13 @@ app.post("/analytics", async (req, res) => {
             topBrowser: [{ name: browser.name, amount: 1 }],
             topReferrer: [{ name: referrer, amount: 1 }],
             topDevice: [{ name: device, amount: 1 }],
+            analyticsOverTime: [
+              {
+                datetime: timestamp,
+                views: 1,
+                interactions: clicks + scrollDepth,
+              },
+            ],
           }
         );
       }
