@@ -279,7 +279,11 @@ app.post("/analytics", async (req, res) => {
           screenResolution,
           viewportSize,
           loadTime,
-          network,
+          network: {
+            effectiveType: network.effectiveType,
+            downlink: Number(floatToIntWithMinOne(network.downlink)),
+            rtt: network.rtt,
+          },
           focus,
         }
       );
