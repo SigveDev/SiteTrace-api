@@ -66,7 +66,10 @@ app.post("/analytics", async (req, res) => {
         existingDocuments.documents[0].network.$id,
         {
           effectiveType: network.effectiveType,
-          downlink: Math.round(network.downlink),
+          downlink:
+            Math.round(network.downlink) === 0
+              ? 1
+              : Math.round(network.downlink),
           rtt: network.rtt,
         }
       );
