@@ -215,7 +215,6 @@ app.post("/analytics", async (req, res) => {
             "66ad3d9a00305e53d6f0",
             documentId,
             {
-              views: analyticsOverTimeRequest.views + 1,
               interactions:
                 analyticsOverTimeRequest.interactions + clicks + scrollDepth,
             }
