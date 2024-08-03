@@ -60,7 +60,7 @@ app.post("/analytics", async (req, res) => {
     if (existingDocuments.total > 0) {
       res.status(201).json({ success: true, response: "Data received" });
 
-      setImmediate(async () => {
+      (async () => {
         // Update the existing document
         const documentId = existingDocuments.documents[0].$id;
         await databases.updateDocument(
@@ -251,7 +251,7 @@ app.post("/analytics", async (req, res) => {
             }
           );
         }
-      });
+      })();
     } else {
       // Create a new document
       const response = await databases.createDocument(
