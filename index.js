@@ -118,7 +118,17 @@ app.post("/analytics", async (req, res) => {
             (topBrowser) => topBrowser.name === browser.name
           );
 
-        if (!browserAnalyticsRequest) {
+        if (browserAnalyticsRequest) {
+          const documentId = browserAnalyticsRequest.$id;
+          await databases.updateDocument(
+            "66a67e300033058839e7",
+            "66abf4c50019a8548c6c",
+            documentId,
+            {
+              amount: browserAnalyticsRequest.amount + 1,
+            }
+          );
+        } else {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66abf4c50019a8548c6c",
@@ -136,7 +146,17 @@ app.post("/analytics", async (req, res) => {
             (topReferrer) => topReferrer.name === referrer
           );
 
-        if (!referrerAnalyticsRequest) {
+        if (referrerAnalyticsRequest) {
+          const documentId = referrerAnalyticsRequest.$id;
+          await databases.updateDocument(
+            "66a67e300033058839e7",
+            "66abf51e003195178367",
+            documentId,
+            {
+              amount: referrerAnalyticsRequest.amount + 1,
+            }
+          );
+        } else {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66abf51e003195178367",
@@ -154,7 +174,17 @@ app.post("/analytics", async (req, res) => {
             (topDevice) => topDevice.name === device
           );
 
-        if (!deviceAnalyticsRequest) {
+        if (deviceAnalyticsRequest) {
+          const documentId = deviceAnalyticsRequest.$id;
+          await databases.updateDocument(
+            "66a67e300033058839e7",
+            "66abf5990001ff3009a9",
+            documentId,
+            {
+              amount: deviceAnalyticsRequest.amount + 1,
+            }
+          );
+        } else {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66abf5990001ff3009a9",
