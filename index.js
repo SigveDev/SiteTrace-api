@@ -175,19 +175,7 @@ app.post("/analytics", async (req, res) => {
             correctedTimestampDate.getTime()
         );
 
-        if (analyticsOverTimeRequest) {
-          const documentId = analyticsOverTimeRequest.$id;
-          await databases.updateDocument(
-            "66a67e300033058839e7",
-            "66ad3d9a00305e53d6f0",
-            documentId,
-            {
-              views: analyticsOverTimeRequest.views + 1,
-              interactions:
-                analyticsOverTimeRequest.interactions + clicks + scrollDepth,
-            }
-          );
-        } else {
+        if (!analyticsOverTimeRequest) {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66ad3d9a00305e53d6f0",
