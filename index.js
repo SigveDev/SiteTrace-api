@@ -74,7 +74,7 @@ app.post("/analytics", async (req, res) => {
         existingDocuments.documents[0].network.$id,
         {
           effectiveType: network.effectiveType,
-          downlink: floatToIntWithMinOne(network.downlink),
+          downlink: Number(floatToIntWithMinOne(network.downlink)),
           rtt: network.rtt,
         }
       );
