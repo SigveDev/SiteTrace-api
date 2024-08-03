@@ -112,9 +112,10 @@ app.post("/analytics", async (req, res) => {
           }
         );
 
-        const browserAnalyticsRequest = totalAnalytics.topBrowser.find(
-          (topBrowser) => topBrowser.name === browser.name
-        );
+        const browserAnalyticsRequest =
+          totalAnalyticsRequest.documents[0].topBrowser.find(
+            (topBrowser) => topBrowser.name === browser.name
+          );
 
         if (!browserAnalyticsRequest) {
           await databases.createDocument(
@@ -129,9 +130,10 @@ app.post("/analytics", async (req, res) => {
           );
         }
 
-        const referrerAnalyticsRequest = totalAnalytics.topReferrer.find(
-          (topReferrer) => topReferrer.name === referrer
-        );
+        const referrerAnalyticsRequest =
+          totalAnalyticsRequest.documents[0].topReferrer.find(
+            (topReferrer) => topReferrer.name === referrer
+          );
 
         if (!referrerAnalyticsRequest) {
           await databases.createDocument(
@@ -146,9 +148,10 @@ app.post("/analytics", async (req, res) => {
           );
         }
 
-        const deviceAnalyticsRequest = totalAnalytics.topDevice.find(
-          (topDevice) => topDevice.name === device
-        );
+        const deviceAnalyticsRequest =
+          totalAnalyticsRequest.documents[0].topDevice.find(
+            (topDevice) => topDevice.name === device
+          );
 
         if (!deviceAnalyticsRequest) {
           await databases.createDocument(
@@ -180,9 +183,10 @@ app.post("/analytics", async (req, res) => {
 
       const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
 
-      const analyticsOverTimeRequest = totalAnalytics.analyticsOverTime.find(
-        (analytics) => analytics.datetime === correctedTimestamp
-      );
+      const analyticsOverTimeRequest =
+        totalAnalyticsRequest.documents[0].analyticsOverTime.find(
+          (analytics) => analytics.datetime === correctedTimestamp
+        );
 
       if (analyticsOverTimeRequest) {
         const documentId = analyticsOverTimeRequest.$id;
