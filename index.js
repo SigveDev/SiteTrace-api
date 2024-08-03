@@ -118,17 +118,7 @@ app.post("/analytics", async (req, res) => {
             (topBrowser) => topBrowser.name === browser.name
           );
 
-        if (browserAnalyticsRequest) {
-          const documentId = browserAnalyticsRequest.$id;
-          await databases.updateDocument(
-            "66a67e300033058839e7",
-            "66abf4c50019a8548c6c",
-            documentId,
-            {
-              amount: browserAnalyticsRequest.amount + 1,
-            }
-          );
-        } else {
+        if (!browserAnalyticsRequest) {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66abf4c50019a8548c6c",
@@ -146,17 +136,7 @@ app.post("/analytics", async (req, res) => {
             (topReferrer) => topReferrer.name === referrer
           );
 
-        if (referrerAnalyticsRequest) {
-          const documentId = referrerAnalyticsRequest.$id;
-          await databases.updateDocument(
-            "66a67e300033058839e7",
-            "66abf51e003195178367",
-            documentId,
-            {
-              amount: referrerAnalyticsRequest.amount + 1,
-            }
-          );
-        } else {
+        if (!referrerAnalyticsRequest) {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66abf51e003195178367",
@@ -174,7 +154,10 @@ app.post("/analytics", async (req, res) => {
             (topDevice) => topDevice.name === device
           );
 
-        if (deviceAnalyticsRequest) {
+        if (
+          existingDocuments.documents[0].device === "Unknown" &&
+          device !== "Unknown"
+        ) {
           const documentId = deviceAnalyticsRequest.$id;
           await databases.updateDocument(
             "66a67e300033058839e7",
@@ -184,7 +167,7 @@ app.post("/analytics", async (req, res) => {
               amount: deviceAnalyticsRequest.amount + 1,
             }
           );
-        } else {
+        } else if (!deviceAnalyticsRequest) {
           await databases.createDocument(
             "66a67e300033058839e7",
             "66abf5990001ff3009a9",
