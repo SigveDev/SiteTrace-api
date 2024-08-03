@@ -20,6 +20,14 @@ client
   .setProject(process.env.PROJECT_ID || "") // Your project ID
   .setKey(process.env.API_KEY || ""); // Your secret API key
 
+function floatToIntWithMinOne(floatValue) {
+  let roundedValue = Math.round(floatValue);
+  if (roundedValue === 0) {
+    return 1;
+  }
+  return roundedValue;
+}
+
 // Endpoint to receive analytics data
 app.post("/analytics", async (req, res) => {
   const {
@@ -66,10 +74,7 @@ app.post("/analytics", async (req, res) => {
         existingDocuments.documents[0].network.$id,
         {
           effectiveType: network.effectiveType,
-          downlink:
-            Math.round(network.downlink) === 0
-              ? 1
-              : Math.round(network.downlink),
+          downlink: floatToIntWithMinOne(network.downlink),
           rtt: network.rtt,
         }
       );
