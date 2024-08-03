@@ -167,10 +167,11 @@ app.post("/analytics", async (req, res) => {
         }
 
         const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
+        const correctedTimestampDate = new Date(correctedTimestamp);
 
         const analyticsOverTimeRequest =
           totalAnalyticsRequest.documents[0].analyticsOverTime.find(
-            (analytics) => analytics.datetime === correctedTimestamp
+            (analytics) => analytics.datetime === correctedTimestampDate
           );
 
         if (analyticsOverTimeRequest) {
@@ -192,7 +193,7 @@ app.post("/analytics", async (req, res) => {
             ID.unique(),
             {
               analytics: analyticsDocumentId,
-              datetime: correctedTimestamp,
+              datetime: correctedTimestampDate,
               views: 1,
               interactions: clicks + scrollDepth,
             }
@@ -347,9 +348,10 @@ app.post("/analytics", async (req, res) => {
         }
 
         const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
+        const correctedTimestampDate = new Date(correctedTimestamp);
 
         const analyticsOverTimeRequest = totalAnalytics.analyticsOverTime.find(
-          (analytics) => analytics.datetime === correctedTimestamp
+          (analytics) => analytics.datetime === correctedTimestampDate
         );
 
         if (analyticsOverTimeRequest) {
@@ -371,7 +373,7 @@ app.post("/analytics", async (req, res) => {
             ID.unique(),
             {
               analytics: analyticsDocumentId,
-              datetime: correctedTimestamp,
+              datetime: correctedTimestampDate,
               views: 1,
               interactions: clicks + scrollDepth,
             }
