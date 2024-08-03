@@ -169,10 +169,11 @@ app.post("/analytics", async (req, res) => {
         const correctedTimestamp = new Date(timestamp).setHours(0, 0, 0, 0);
         const correctedTimestampDate = new Date(correctedTimestamp);
 
-        const analyticsOverTimeRequest =
-          totalAnalyticsRequest.documents[0].analyticsOverTime.find(
-            (analytics) => analytics.datetime === correctedTimestampDate
-          );
+        const analyticsOverTimeRequest = totalAnalytics.analyticsOverTime.find(
+          (analytics) =>
+            new Date(analytics.datetime).getTime() ===
+            correctedTimestampDate.getTime()
+        );
 
         if (analyticsOverTimeRequest) {
           const documentId = analyticsOverTimeRequest.$id;
@@ -354,7 +355,9 @@ app.post("/analytics", async (req, res) => {
         const correctedTimestampDate = new Date(correctedTimestamp);
 
         const analyticsOverTimeRequest = totalAnalytics.analyticsOverTime.find(
-          (analytics) => analytics.datetime === correctedTimestampDate
+          (analytics) =>
+            new Date(analytics.datetime).getTime() ===
+            correctedTimestampDate.getTime()
         );
 
         if (analyticsOverTimeRequest) {
